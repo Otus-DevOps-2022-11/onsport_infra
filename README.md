@@ -17,6 +17,6 @@ Host someinternalhost
 	ProxyCommand ssh -W %h:%p bastion
 	IdentityFile ~/.ssh/appuser
 
-Connection to someinternalhost:
+Connection to someinternalhost one line:
 ssh -i ~/.ssh/appuser -AJ appuser@158.160.56.105 appuser@10.128.0.26
 
