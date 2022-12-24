@@ -1,0 +1,33 @@
+#cloud-config
+users:
+    - default
+    - name: yc-user
+      grpups: sudo
+      sudo: ALL=(ALL) NOPASSWD:ALL
+      shell: /bin/bash
+      ssh-authorized-keys:
+        - ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQDAHocpIabxeby7iBn2mHbCXP2WnV8F4Q1HDnIZYeuSBi06gYQouBKZHuA+28cqNFHA07tS5eNJ7Mv0YM5HzhJyY/vTnqnUdM8rw9RdRLLUlP2M2ZiV5/e0/IpVBzstAUeInRNh4ECQRACw427GkRFzW081SWXzJ0LsZbBjT9upM4joNephVPf6oWtW7dTXnrRdFK0VKlfuwY2r7ml8Qe/4ESKUJVN11eevGGD84Pw11wDZKcilOD10ght9NRNKP8+OU7DMR0ZCkU6Q4KQu1CfsKn+SdGrCURJm8yMP1NwB2XIKzWvIWHgRWrrlGikdoBNyJ9Cqd+jq3Kk0zgFHDhXygFgWsZXJOS7wMIW3V2UbQeo4XJhG3F5S4FVSg+mns2wbbiqTw4pD/z1EWgSO6daRaVyQN1wZO+0t95R4tYJ7zdNlh7Ka8C3g41hjJ+QP1B/WJssyt3n2zjp1oFvRgePvTe0w5hEQ6ecc0CD9haFzmag++1V1c9jQQqJ2jHj9PKE= debian@debian
+
+package_update: true
+
+write_files:
+  - path: /home/yc-user/startup.sh
+    owner: yc-user:yc-user
+    permissions: '0755'
+    content: |
+      sudo apt update
+      sudo apt install -y ruby-full ruby-bundler build-essential
+      wget -qO - https://www.mongodb.org/static/pgp/server-4.2.asc | sudo apt-key add -
+      echo "deb [ arch=amd64,arm64 ] https://repo.mongodb.org/apt/ubuntu xenial/mongodb-org/4.2 multiverse" | sudo tee /etc/apt/sources.list.d/mongodb-org-4.2.list
+      sudo apt-get update
+      sudo apt-get install -y mongodb-org
+      sudo systemctl start mongod
+      sudo systemctl enable mongod
+      sudo apt-get install -y git
+      git clone -b monolith https://github.com/express42/reddit.git
+      cd reddit && bundle install
+      puma -d
+
+runcmd:
+  - bash /home/debian/yc-user/script.sh
+
