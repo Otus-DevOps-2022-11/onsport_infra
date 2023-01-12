@@ -20,3 +20,7 @@ Host someinternalhost
 Connection to someinternalhost one line:
 ssh -i ~/.ssh/appuser -AJ appuser@158.160.56.105 appuser@10.128.0.26
 
+testapp_IP = 51.250.76.217
+testapp_port = 9292
+
+./startup.sh
